@@ -2,6 +2,17 @@
     width: 40%;
 }
 
-.hero{
+.search-image-box{
+    height: 280px;
+}
 
+img{
+    position: relative;
+    max-width: 150px;
+    /* width: 50px; */
+}
+
+.display-result{
+    margin: 15px;
+    ;
 }
