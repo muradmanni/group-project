@@ -9,6 +9,8 @@
 img{
     position: relative;
     max-width: 150px;
+    max-height: 222.5px;
+    height: 222.5px;
  /* width: 50px; */
 }
 
@@ -19,4 +21,8 @@ img{
 
 .modal-content-width{
     width: 50px;
+}
+
+.notification{
+    height: 304px;
 }
