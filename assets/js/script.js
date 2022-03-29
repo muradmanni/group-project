@@ -8,31 +8,32 @@ var omdb1 = "https://www.omdbapi.com/?apikey=" + omdbApiKey + "&i=tt1285016"
 btnSearch.addEventListener('click',searchMovie);
 textboxSearch.addEventListener('keyup', toggleSearchButton);
 
+var pageNumber;
+var totalPages;
+var totalMovies;
+
 function toggleSearchButton(){
     textboxSearch.value.length>0 ? btnSearch.disabled=false :btnSearch.disabled=true;
 }
 
 function searchMovie(event){
     event.preventDefault();
-    omdbSearch(textboxSearch.value);
+    omdbSearch(textboxSearch.value,2);
 
+    
     sectionSearch.setAttribute('class','hero');
 }
 
-function omdbSearch(movieTitle){
-    fetch(omdbUrl + movieTitle).then(function (response) {
+function omdbSearch(movieTitle,page){
+    console.log(omdbUrl + movieTitle + "&page=" + page);
+    fetch(omdbUrl + movieTitle + "&page=" + page).then(function (response) {
         if (response.ok) {
           response.json().then(function (data) {
-            console.log(data);
             if (data['Response']==='False'){
                 console.log("Not Found");
-                Bulma().alert({
-                    type: 'danger',
-                    title: 'This is an alert!',
-                    body: 'Ooohh what button you gonna click?',
-                    confirm: 'Confirm it!',
-                    cancel: 'Maybe not'
-                });
+            }
+            else{
+                showSearchResult(data);
             }
           });
         } else {
@@ -42,5 +43,25 @@ function omdbSearch(movieTitle){
     
 }
 
+function showSearchResult(data){
+    console.log(data);
+    totalMovies=data['totalResults'];
+    calculateTotalPages(totalMovies);
+
+
+}
+
+function calculateTotalPages(totalMovies){
+    totalPages = Math.floor(totalMovies / 10);
+    
+
+    if (totalMovies%10>0)
+    {
+        totalPages++;
+    }
+    
+    console.log("TOtal Movies " + totalMovies + "     totalPages " +totalPages);
+}
 
 btnSearch.disabled = true;
+
