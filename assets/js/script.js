@@ -3,6 +3,9 @@ var btnSearch = document.querySelector("#btn-search");
 var sectionSearch = document.querySelector("#section-search");
 var textboxSearch = document.querySelector("#textbox-search");
 
+
+                                                  
+
 var omdbApiKey="ef78856e";
 var omdbUrl ="https://www.omdbapi.com/?apikey=" + omdbApiKey + "&type=movie&s=";
 var omdbSingleSearchUrl = "https://www.omdbapi.com/?apikey=" + omdbApiKey + "&i="
@@ -14,6 +17,8 @@ var totalPages;
 var totalMovies;
 
 function toggleSearchButton(){
+    var totalChild = document.body.children.length;
+    // console.log("before searching : " + document.body.children.length);
     textboxSearch.value.length>0 ? btnSearch.disabled=false :btnSearch.disabled=true;
 }
 
@@ -26,7 +31,7 @@ function searchMovie(event){
 }
 
 function omdbSearchTitle(movieTitle,page){
-    console.log(omdbUrl + movieTitle + "&page=" + page);
+    
     fetch(omdbUrl + movieTitle + "&page=" + page).then(function (response) {
         if (response.ok) {
           response.json().then(function (data) {
@@ -45,8 +50,6 @@ function omdbSearchTitle(movieTitle,page){
 }
 
 function omdbGetSingleMovieDetails(omdbid){
-
-    console.log(omdbSingleSearchUrl  + omdbid);
     fetch(omdbSingleSearchUrl+ omdbid).then(function (response) {
         if (response.ok) {
           response.json().then(function (data) {
@@ -65,17 +68,33 @@ function omdbGetSingleMovieDetails(omdbid){
 }
 
 function showSearchResult(data){
-    document.body.removeChild(document.body.lastChild);
     console.log(data);
+    // var totalChild = document.body.children.length;
+    // console.log("before creating : " + document.body.children.length);
+    //
+    var sectionMovieResultPre = document.querySelector("#section-movie-result");
+    const t = document.body.getElementsByClassName("display-result");
+    if (sectionMovieResultPre !== null)
+    {   
+        document.body.removeChild(sectionMovieResultPre);
+        alert("i am in");
+
+        var sectionPagination = document.querySelector("#section-pagination");
+        if (sectionPagination!==null)
+        {
+            document.body.removeChild(sectionPagination);
+
+        }
+    }
     totalMovies=data["totalResults"];
     calculateTotalPages(totalMovies);
-    console.log("total movies in this page is " + data['Search'].length)
+    
 
     var sectionMovieResult=document.createElement("section");
-
+    sectionMovieResult.setAttribute("id","section-movie-result")
     sectionMovieResult.className= "hero display-result center-please";
-    sectionMovieResult.setAttribute("id","section-display-result")
     
+    console.log(sectionMovieResult.getAttribute('id'));
     var searchMovieDivContainer=document.createElement ("div");
     searchMovieDivContainer.className= "container is-fluid";
     var searchMovieDivContainerColumn = document.createElement("div");
@@ -91,6 +110,7 @@ function showSearchResult(data){
             poster="./assets/images/image-not-available.jpg";
         }
     
+        omdbGetSingleMovieDetails(data['Search'][i]['imdbID']);
 
 
 
@@ -116,6 +136,8 @@ function showSearchResult(data){
     searchMovieDivContainer.appendChild(searchMovieDivContainerColumn);
     sectionMovieResult.appendChild(searchMovieDivContainer);
     document.body.appendChild(sectionMovieResult);
+
+    console.log("after creating : " + document.body.children.length);
 }
 
 function calculateTotalPages(totalMovies){
@@ -127,7 +149,35 @@ function calculateTotalPages(totalMovies){
         totalPages++;
     }
     
+    if (totalPages>1)
+    {
+        generatePagination();
+    }
     console.log("TOtal Movies " + totalMovies + "     totalPages " +totalPages);
+}
+
+function generatePagination(){
+
+    var sectionPagination =document.createElement("section");
+    sectionPagination.setAttribute("id","section-pagination")
+    // <section>
+    //     <nav class="pagination" role="navigation" aria-label="pagination">
+    //       <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
+    //       <a class="pagination-next">Next page</a>
+    //       <ul class="pagination-list">
+    //         <li>
+    //           <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
+    //         </li>
+    //         <li>
+    //           <a class="pagination-link" aria-label="Goto page 2">2</a>
+    //         </li>
+    //         <li>
+    //           <a class="pagination-link" aria-label="Goto page 3">3</a>
+    //         </li>
+    //       </ul>
+    //     </nav>
+    //   </section>
+    document.body.appendChild(sectionPagination);
 }
 
 btnSearch.disabled = true;
