@@ -182,3 +182,21 @@ function generatePagination(){
 
 btnSearch.disabled = true;
 
+function getDoesTheDogDie(event){
+    event.preventDefault();
+    fetch('https://www.doesthedogdie.com/dddsearch?q=', {
+        
+        headers: {
+            'Accept': 'application/json',
+            'X-API-KEY': 'aac874006225112ce8148d43228142c5',
+        }
+    }).then(function (response) {
+        console.log(response);
+        if (response.ok) {
+            response.json().then(function (data) {
+              console.log(data);
+            });
+          } 
+          });    
+}
+
