@@ -41,6 +41,7 @@ function omdbSearchTitle(movieTitle,page){
                 //CHANGE console log to MODAL display
             }
             else{
+                localStorage.setItem("currentPage",page);
                 showSearchResult(data);
             }
           });
@@ -78,11 +79,12 @@ function showSearchResult(data){
     if (sectionMovieResultPre !== null)
     {   
         document.body.removeChild(sectionMovieResultPre);
-       // alert("i am in");
+        
 
         var sectionPagination = document.querySelector("#section-pagination");
         if (sectionPagination!==null)
         {
+            alert("i am in");
             document.body.removeChild(sectionPagination);
 
         }
@@ -154,19 +156,19 @@ function calculateTotalPages(totalMovies){
     {
         generatePagination();
     }
-    console.log("TOtal Movies " + totalMovies + "     totalPages " +totalPages);
+    console.log("Total Movies " + totalMovies + "     totalPages " +totalPages);
 }
 
 function generatePagination(){
     var loopStartingInt;
-    pageNumber=parseInt(localStorage.getItem("currentPage"));
+    var loopFinishingInt;
+    pageNumber=getCurrentPageNumber();
     
     if (isNaN(pageNumber))
     {
         pageNumber=1;
     }
 
-    console.log(pageNumber);
     var sectionPagination =document.createElement("section");
     sectionPagination.setAttribute("id","section-pagination");
 
@@ -181,7 +183,17 @@ function generatePagination(){
     var aElement;
 
     var showPages;
-    totalPages>7 ? showPages=7 : showPages=totalPages;
+    if (totalPages>7)
+    { 
+        showPages=7;
+        loopFinishingInt=3;
+    }
+    else
+    {
+        showPages=totalPages;
+        loopFinishingInt=0;
+    }
+
     
     liElement = document.createElement("li");            
     aElement=document.createElement("a");
@@ -205,7 +217,7 @@ function generatePagination(){
                 loopStartingInt=pageNumber-1;
             
     }
-    //alert("Page number is = " + pageNumber + "    Loop start Int is " + loopStartingInt);
+    alert("Page number is = " + pageNumber + "    Loop start Int is " + loopStartingInt);
     
     if (pageNumber>3){
         liElement = document.createElement("li");
@@ -215,7 +227,7 @@ function generatePagination(){
         liElement.appendChild(aElement);
         ulElement.appendChild(liElement);
     }
-        for(var i=loopStartingInt; i<(loopStartingInt+3); i++){    
+        for(var i=loopStartingInt; i<(loopStartingInt+loopFinishingInt); i++){    
                 liElement = document.createElement("li");            
                 aElement=document.createElement("a");
                 aElement.className="pagination-link";
@@ -247,8 +259,23 @@ function generatePagination(){
     navElement.appendChild(ulElement);
     sectionPagination.appendChild(navElement);
     document.body.appendChild(sectionPagination);
+    var test = document.getElementsByClassName("pagination-link");
+    console.log(test.length);
+    
+    for (var i=0; i<test.length; i++)
+    {
+        if(pageNumber== test[i].getAttribute("data-label"))
+        {
+            test[i].className="pagination-link is-current";
+        }
+
+    }
 }
 
+function getCurrentPageNumber()
+{
+    return parseInt(localStorage.getItem("currentPage"));
+}
 
 function check(event){
     //console.log(event.target);
