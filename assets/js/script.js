@@ -1,24 +1,25 @@
-
+// --------------------   VARIABLES DECLARED  -----------------------
 var btnSearch = document.querySelector("#btn-search");
 var sectionSearch = document.querySelector("#section-search");
 var textboxSearch = document.querySelector("#textbox-search");
+var sectionPaginationClick = document.getElementsByTagName("section");
 
-
-                                                  
 
 var omdbApiKey="ef78856e";
 var omdbUrl ="https://www.omdbapi.com/?apikey=" + omdbApiKey + "&type=movie&s=";
 var omdbSingleSearchUrl = "https://www.omdbapi.com/?apikey=" + omdbApiKey + "&i="
-btnSearch.addEventListener("click",searchMovie);
-textboxSearch.addEventListener("keyup", toggleSearchButton);
 
 var pageNumber;
 var totalPages;
 var totalMovies;
+var currentPage;
+
+btnSearch.addEventListener("click",searchMovie);
+textboxSearch.addEventListener("keyup", toggleSearchButton);
+document.addEventListener("click",check);
 
 function toggleSearchButton(){
     var totalChild = document.body.children.length;
-    // console.log("before searching : " + document.body.children.length);
     textboxSearch.value.length>0 ? btnSearch.disabled=false :btnSearch.disabled=true;
 }
 
@@ -58,7 +59,7 @@ function omdbGetSingleMovieDetails(omdbid){
                 //CHANGE console log to MODAL display
             }
             else{
-                console.log(data);
+                //console.log(data);
             }
           });
         } else {
@@ -68,7 +69,7 @@ function omdbGetSingleMovieDetails(omdbid){
 }
 
 function showSearchResult(data){
-    console.log(data);
+    //console.log(data);
     // var totalChild = document.body.children.length;
     // console.log("before creating : " + document.body.children.length);
     //
@@ -77,7 +78,7 @@ function showSearchResult(data){
     if (sectionMovieResultPre !== null)
     {   
         document.body.removeChild(sectionMovieResultPre);
-        alert("i am in");
+       // alert("i am in");
 
         var sectionPagination = document.querySelector("#section-pagination");
         if (sectionPagination!==null)
@@ -94,7 +95,7 @@ function showSearchResult(data){
     sectionMovieResult.setAttribute("id","section-movie-result")
     sectionMovieResult.className= "hero display-result center-please";
     
-    console.log(sectionMovieResult.getAttribute('id'));
+    //console.log(sectionMovieResult.getAttribute('id'));
     var searchMovieDivContainer=document.createElement ("div");
     searchMovieDivContainer.className= "container is-fluid";
     var searchMovieDivContainerColumn = document.createElement("div");
@@ -137,7 +138,7 @@ function showSearchResult(data){
     sectionMovieResult.appendChild(searchMovieDivContainer);
     document.body.appendChild(sectionMovieResult);
 
-    console.log("after creating : " + document.body.children.length);
+    //console.log("after creating : " + document.body.children.length);
 }
 
 function calculateTotalPages(totalMovies){
@@ -157,35 +158,118 @@ function calculateTotalPages(totalMovies){
 }
 
 function generatePagination(){
+    var loopStartingInt;
+    pageNumber=parseInt(localStorage.getItem("currentPage"));
+    
+    if (isNaN(pageNumber))
+    {
+        pageNumber=1;
+    }
 
+    console.log(pageNumber);
     var sectionPagination =document.createElement("section");
-    sectionPagination.setAttribute("id","section-pagination")
-    // <section>
-    //     <nav class="pagination" role="navigation" aria-label="pagination">
-    //       <a class="pagination-previous is-disabled" title="This is the first page">Previous</a>
-    //       <a class="pagination-next">Next page</a>
-    //       <ul class="pagination-list">
-    //         <li>
-    //           <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
-    //         </li>
-    //         <li>
-    //           <a class="pagination-link" aria-label="Goto page 2">2</a>
-    //         </li>
-    //         <li>
-    //           <a class="pagination-link" aria-label="Goto page 3">3</a>
-    //         </li>
-    //       </ul>
-    //     </nav>
-    //   </section>
+    sectionPagination.setAttribute("id","section-pagination");
+
+    var navElement = document.createElement("nav");
+    navElement.className="pagination is-centered";
+    navElement.setAttribute("role","navigation");
+    
+    var ulElement = document.createElement("ul");
+    ulElement.className="pagination-list";
+
+    var liElement;
+    var aElement;
+
+    var showPages;
+    totalPages>7 ? showPages=7 : showPages=totalPages;
+    
+    liElement = document.createElement("li");            
+    aElement=document.createElement("a");
+    aElement.className="pagination-link";
+    aElement.setAttribute("data-label","1");
+    aElement.textContent=1;
+    liElement.appendChild(aElement);
+    ulElement.appendChild(liElement);
+
+    switch (pageNumber)
+    {
+        case 2:
+        case 1:
+            loopStartingInt=2;
+            break;
+        case totalPages:
+        case totalPages-1:
+            loopStartingInt=totalPages-3;
+            break;
+        default:
+                loopStartingInt=pageNumber-1;
+            
+    }
+    //alert("Page number is = " + pageNumber + "    Loop start Int is " + loopStartingInt);
+    
+    if (pageNumber>3){
+        liElement = document.createElement("li");
+        aElement=document.createElement("a");
+        aElement.className="pagination-ellipsis";
+        aElement.textContent="...";
+        liElement.appendChild(aElement);
+        ulElement.appendChild(liElement);
+    }
+        for(var i=loopStartingInt; i<(loopStartingInt+3); i++){    
+                liElement = document.createElement("li");            
+                aElement=document.createElement("a");
+                aElement.className="pagination-link";
+                aElement.setAttribute("data-label",i);
+                aElement.textContent=i;
+            
+            liElement.appendChild(aElement);
+            ulElement.appendChild(liElement);
+        }
+    
+    if (pageNumber<(totalPages-2)){
+        liElement = document.createElement("li");
+        aElement=document.createElement("a");
+        aElement.className="pagination-ellipsis";
+        aElement.textContent="...";
+        liElement.appendChild(aElement);
+        ulElement.appendChild(liElement);
+    }
+
+    liElement = document.createElement("li");            
+    aElement=document.createElement("a");
+    aElement.className="pagination-link";
+    aElement.setAttribute("data-label",totalPages);
+    aElement.textContent=totalPages;
+    liElement.appendChild(aElement);
+    ulElement.appendChild(liElement);
+
+
+    navElement.appendChild(ulElement);
+    sectionPagination.appendChild(navElement);
     document.body.appendChild(sectionPagination);
+}
+
+
+function check(event){
+    //console.log(event.target);
+    if((event.target).className==="pagination-link")
+    {
+        if (typeof(parseInt((event.target).textContent))==="number")
+        {
+            pageNumber=(event.target).textContent
+            omdbSearchTitle(textboxSearch.value,pageNumber);
+        }
+    }
+    localStorage.setItem("currentPage",pageNumber);
+    
 }
 
 btnSearch.disabled = true;
 
 function getDoesTheDogDie(event){
     event.preventDefault();
-    fetch('https://www.doesthedogdie.com/dddsearch?q=', {
-        
+    fetch('https://www.doesthedogdie.com/dddsearch?q=titanic', {
+        mode: 'no-cors',
         headers: {
             'Accept': 'application/json',
             'X-API-KEY': 'aac874006225112ce8148d43228142c5',
