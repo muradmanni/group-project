@@ -84,7 +84,7 @@ function showSearchResult(data){
         var sectionPagination = document.querySelector("#section-pagination");
         if (sectionPagination!==null)
         {
-            alert("i am in");
+            // alert("i am in");
             document.body.removeChild(sectionPagination);
 
         }
@@ -183,18 +183,58 @@ function generatePagination(){
     var aElement;
 
     var showPages;
-    if (totalPages>7)
-    { 
-        showPages=7;
-        loopFinishingInt=3;
+    // if (totalPages>7)
+    // { 
+    //     showPages=7;
+    //     loopFinishingInt=3;
+    //     loopStartingInt=totalPages-3;
+    // }
+    // else if(totalPages<7)
+    // {   
+    //     showPages=totalPages;
+    //     loopFinishingInt=totalPages-2;
+    // }
+    // else{
+    //     loopFinishingInt=2;
+    // }
+
+    // if (pageNumber<4)
+    // {
+    //     loopStartingInt=2;
+    // }
+    // else if(pageNumber>7)
+    // {
+    //     loopStartingInt=totalPages-3;
+    // }
+    // else
+    // {
+    //     loopStartingInt=pageNumber-1;
+    // }
+    if (totalPages<=8)
+    {
+        loopStartingInt=2;
+        loopFinishingInt=totalPages;
     }
     else
     {
-        showPages=totalPages;
-        loopFinishingInt=0;
+        if(pageNumber<4)
+        {
+            loopStartingInt=2;
+            loopFinishingInt=5;
+        }
+        else if(pageNumber<=(totalPages-3))
+        {
+            
+            loopStartingInt=pageNumber-1;
+            loopFinishingInt=pageNumber+2;
+        }
+        else{
+            loopStartingInt=totalPages-3;
+            loopFinishingInt=totalPages;
+        }
     }
+    // alert("Page number is = " + pageNumber + "    Loop start Int is " + loopStartingInt);
 
-    
     liElement = document.createElement("li");            
     aElement=document.createElement("a");
     aElement.className="pagination-link";
@@ -202,24 +242,10 @@ function generatePagination(){
     aElement.textContent=1;
     liElement.appendChild(aElement);
     ulElement.appendChild(liElement);
-
-    switch (pageNumber)
-    {
-        case 2:
-        case 1:
-            loopStartingInt=2;
-            break;
-        case totalPages:
-        case totalPages-1:
-            loopStartingInt=totalPages-3;
-            break;
-        default:
-                loopStartingInt=pageNumber-1;
-            
-    }
-    alert("Page number is = " + pageNumber + "    Loop start Int is " + loopStartingInt);
+ 
     
-    if (pageNumber>3){
+    
+    if (pageNumber>3 && totalPages>7){
         liElement = document.createElement("li");
         aElement=document.createElement("a");
         aElement.className="pagination-ellipsis";
@@ -227,7 +253,8 @@ function generatePagination(){
         liElement.appendChild(aElement);
         ulElement.appendChild(liElement);
     }
-        for(var i=loopStartingInt; i<(loopStartingInt+loopFinishingInt); i++){    
+        //for(var i=loopStartingInt; i<(loopStartingInt+loopFinishingInt); i++){    
+        for(var i=loopStartingInt; i<(loopFinishingInt); i++){    
                 liElement = document.createElement("li");            
                 aElement=document.createElement("a");
                 aElement.className="pagination-link";
@@ -238,7 +265,7 @@ function generatePagination(){
             ulElement.appendChild(liElement);
         }
     
-    if (pageNumber<(totalPages-2)){
+    if (pageNumber<(totalPages-2) && totalPages>7){
         liElement = document.createElement("li");
         aElement=document.createElement("a");
         aElement.className="pagination-ellipsis";
